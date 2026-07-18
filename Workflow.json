@@ -13,7 +13,7 @@
     },
     {
       "parameters": {
-        "sendTo": "piyush200114kumar@gmail.com",
+        "sendTo": "your-email@example.com",
         "subject": "=🚨 [Production][{{$json.output.severity}}] {{$('Edit Fields').item.json.Workflow}} Failed",
         "emailType": "text",
         "message": "=Hello Admin,\n\nA production workflow has failed.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nWORKFLOW DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nWorkflow:\n{{$('Edit Fields').item.json.Workflow}}\n\nWorkflow ID:\n{{$('Edit Fields').item.json[\"Workflow ID\"]}}\n\nExecution ID:\n{{$('Edit Fields').item.json[\"Execution ID\"]}}\n\nFailed Node:\n{{$('Edit Fields').item.json[\"Failed Node\"]}}\n\nExecution Mode:\n{{$('Edit Fields').item.json[\"Execution Mode\"]}}\n\nTimestamp:\n{{$('Edit Fields').item.json.Timestamp}}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nERROR MESSAGE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n{{$('Edit Fields').item.json[\"Error Message\"]}}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAI ANALYSIS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nSeverity:\n{{$json.output.severity}}\n\nCategory:\n{{$json.output.error_category}}\n\nRoot Cause:\n{{$json.output.root_cause}}\n\nRecommended Fix:\n{{$json.output.recommended_fix}}\n\nRetry Safe:\n{{$json.output.retry_safe}}\n\nPreventive Actions:\n{{$json.output.preventive_actions.join('\\n• ')}}\n\nSummary:\n{{$json.output.summary}}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nExecution URL:\n{{$('Edit Fields').item.json[\"Execution URL\"]}}\n\nAutoNode AI Monitoring System",
@@ -27,12 +27,12 @@
       ],
       "id": "5fcc0b27-e0ca-4eaa-b155-8ff6606625e0",
       "name": "Send a message1",
-      "webhookId": "610ada94-444d-4dcb-8444-5593163e7521",
+      "webhookId": "00000000-0000-0000-0000-000000000001",
       "retryOnFail": true,
       "waitBetweenTries": 5000,
       "credentials": {
         "gmailOAuth2": {
-          "id": "jiyblwodsItcGgYF",
+          "id": "FAKE_GMAIL_CRED_ID",
           "name": "Gmail account"
         }
       },
@@ -58,9 +58,9 @@
         "select": "channel",
         "channelId": {
           "__rl": true,
-          "value": "C0B4LEX3YVC",
+          "value": "C0000000000",
           "mode": "list",
-          "cachedResultName": "all-ai-automations"
+          "cachedResultName": "your-channel-name"
         },
         "text": "=🚨 *Production Workflow Failed*\n\nWorkflow:\n{{$('Edit Fields').item.json.Workflow}}\n\nSeverity:\n{{$json.output.severity}}\n\nCategory:\n{{$json.output.error_category}}\n\nFailed Node:\n{{$('Edit Fields').item.json[\"Failed Node\"]}}\n\nRoot Cause:\n{{$json.output.root_cause}}\n\nFix:\n{{$json.output.recommended_fix}}\n\nRetry Safe:\n{{$json.output.retry_safe}}\n\nExecution:\n{{$('Edit Fields').item.json[\"Execution URL\"]}}",
         "otherOptions": {}
@@ -73,12 +73,12 @@
       ],
       "id": "6d569a9c-5500-4625-9b20-5df832a768e3",
       "name": "Send a message",
-      "webhookId": "095e094a-2b26-4a0b-bb54-f6c0c9893da5",
+      "webhookId": "00000000-0000-0000-0000-000000000002",
       "retryOnFail": true,
       "waitBetweenTries": 5000,
       "credentials": {
         "slackApi": {
-          "id": "3PzD52IgPKRjNSyN",
+          "id": "FAKE_SLACK_CRED_ID",
           "name": "Slack account"
         }
       },
@@ -90,17 +90,17 @@
         "operation": "appendOrUpdate",
         "documentId": {
           "__rl": true,
-          "value": "15m7QNRiKCWk7PLe6D6Ga2ApgecyEUFsdUBqKH5JOj1c",
+          "value": "FAKE_GOOGLE_SHEET_ID_1234567890",
           "mode": "list",
           "cachedResultName": "leads",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15m7QNRiKCWk7PLe6D6Ga2ApgecyEUFsdUBqKH5JOj1c/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/FAKE_GOOGLE_SHEET_ID_1234567890/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
-          "value": 652860679,
+          "value": 0,
           "mode": "list",
           "cachedResultName": "Error In work flow",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15m7QNRiKCWk7PLe6D6Ga2ApgecyEUFsdUBqKH5JOj1c/edit#gid=652860679"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/FAKE_GOOGLE_SHEET_ID_1234567890/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -307,7 +307,7 @@
       "waitBetweenTries": 5000,
       "credentials": {
         "googleApi": {
-          "id": "QnOxaO0VQqPOlknq",
+          "id": "FAKE_GOOGLE_CRED_ID",
           "name": "Google Sheets account"
         }
       },
@@ -362,7 +362,7 @@
       "name": "Groq Chat Model",
       "credentials": {
         "groqApi": {
-          "id": "um8XtORKfeOIq9m2",
+          "id": "FAKE_GROQ_CRED_ID",
           "name": "Groq account"
         }
       }
@@ -447,7 +447,6 @@
   },
   "pinData": {},
   "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "6c3c1071f612cae6268afcd399111b19718f5d758d2bb723cd6ed4ea682bc43b"
+    "templateCredsSetupCompleted": true
   }
 }
