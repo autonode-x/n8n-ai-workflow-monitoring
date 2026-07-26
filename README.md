@@ -175,8 +175,9 @@ AI-Workflow-Monitoring-System/
 ├── workflow.json
 ├── LICENSE
 ├── .gitignore
-└── images/
+└── assets/
     └── workflow.png
+    └── architecture.png
 ```
 
 ---
@@ -216,16 +217,6 @@ git clone https://github.com/autonode-x/n8n-ai-workflow-monitoring.git
 
 ---
 
-# 📸 Screenshots
-
-Add screenshots here:
-
-* Workflow Canvas
-* Gmail Alert
-* Slack Notification
-* Google Sheets Log
-
----
 
 # 🔮 Future Improvements
 
