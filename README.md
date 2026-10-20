@@ -1,247 +1,53 @@
-# 🤖 AI Workflow Monitoring System
+# Privacy-Aware n8n Failure Alerting
 
-> Production-ready **n8n Workflow Monitoring System** that automatically detects workflow failures, analyzes the root cause using AI, and instantly sends alerts through **Gmail, Slack, and Google Sheets**.
+> **Architecture:** See [ARCHITECTURE.md](ARCHITECTURE.md) for the infographic, detailed flow, and trust boundaries.
 
----
+A small n8n error-workflow template that captures a minimal set of execution metadata and routes an incident notice to an operations channel, an operations inbox, and an append-only Google Sheets log. It is designed to avoid copying raw error text, stack traces, trigger payloads, or business data into routine alerts.
 
-## 📌 Overview
+> **Sanitized public template:** `Workflow.json` contains no credential bindings. Your Slack channel, operations email, and Google Sheets destination must be configured for your own environment before activation.
 
-Managing multiple production workflows can become difficult when failures go unnoticed.
+## Project snapshot
 
-This project continuously monitors failed n8n workflow executions and automatically generates an AI-powered incident report.
+- **Category:** n8n operations automation, incident notification, privacy-aware logging
+- **Trigger:** n8n Error Trigger, invoked when the workflow is configured as an error workflow for other workflows
+- **Destinations:** Slack, Gmail, and Google Sheets (each is best-effort in the supplied template)
+- **Telemetry:** Timestamp, workflow/execution identifiers, last failed node, execution mode, retry reference, error class/name, and failed status
+- **Explicitly omitted:** Raw error message, stack trace, original trigger payload, business data, and internal execution URL in the sanitized template
 
-Instead of manually checking execution logs, the workflow:
+## How it works
 
-* Detects workflow failures automatically
-* Collects execution details
-* Uses an AI Agent to analyze the error
-* Identifies the probable root cause
-* Classifies the severity level
-* Suggests recommended fixes
-* Sends notifications to Gmail and Slack
-* Logs every incident in Google Sheets
+1. An assigned n8n **Error Trigger** receives an error event from a monitored workflow.
+2. **Normalize Safe Incident Context** creates a bounded incident record from selected event metadata and sets the status to `failed`.
+3. Three independent branches attempt to notify a private Slack operations channel, email a configured operations inbox, and append a safe metadata row to a Google Sheets incident log.
+4. Each sink is configured to continue on error so a failure in one notification destination does not intentionally prevent the other sinks from running.
 
----
+See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the system flow and trust boundaries.
 
-# ✨ Features
+## Import and configure
 
-* 🚨 Automatic Workflow Failure Detection
-* 🤖 AI-Powered Root Cause Analysis
-* 📧 Gmail Incident Alerts
-* 💬 Slack Notifications
-* 📊 Google Sheets Incident Logging
-* 🧠 Error Categorization
-* 🔥 Severity Classification
-* 🔁 Retry Safety Detection
-* 📋 Preventive Recommendations
-* 📈 Production Monitoring Dashboard Ready
+1. Import `Workflow.json` into your test n8n instance.
+2. Bind your own Slack, Gmail, and Google Sheets credentials from n8n's credential manager. The public file intentionally has no credential references or secret values.
+3. Replace `REPLACE_WITH_YOUR_SLACK_CHANNEL_ID`, `REPLACE_WITH_PRIVATE_OPS_EMAIL`, `REPLACE_WITH_YOUR_GOOGLE_RESOURCE_ID`, and `REPLACE_WITH_YOUR_SHEET_TAB_NAME` with private destinations you control.
+4. Create a dedicated incident log with access limited to operators. Do not grant public link access. Establish retention and deletion rules for the rows.
+5. Set this workflow as the **Error Workflow** in each n8n workflow you intend to monitor. Test in a non-production workflow with a controlled failure.
+6. Verify the Slack, email, and sheet branches independently, including what happens when one destination is unavailable.
+7. Confirm that production execution logs and workflow history have separate access controls and retention limits; this workflow does not change n8n's own execution-data retention.
 
----
+## Security and privacy considerations
 
-# 🛠 Tech Stack
+The submitted source export contained an owner email, private Slack channel identifier, Google Sheet identifiers/URLs, credential references, webhook IDs, and an n8n instance ID. These have been removed or replaced in this portfolio copy. **This does not revoke credentials or undo any prior disclosure.** If any actual credential was exposed in a public repository, rotate/revoke it with the provider and check repository history. The exposed email is not itself a password, but consider replacing it with a role-based operations alias and review unwanted mail.
 
-### Automation
+- **Execution URLs:** The source export included an internal n8n execution URL in alerts and the sheet mapping. Execution URLs can reveal internal operational details and may be accessible to logged-in operators. This sanitized template removes that field from notification and logging paths. Apply the same change to any live copy before sharing or using it broadly.
+- **Metadata is still sensitive:** Workflow names/IDs, execution IDs, node names, error classes, and timestamps can reveal operational structure. Restrict Slack, inbox, Sheets, n8n access, and retention accordingly.
+- **Least privilege:** Use dedicated n8n credentials and role-based inbox/channel access. Avoid broad service-account permissions.
+- **No raw data by design:** Keep the safe-context allowlist narrow. Do not add `$json` wholesale, raw error messages, stacks, secrets, customer data, or trigger payloads to notifications.
+- **Best-effort delivery:** The workflow may not alert if all configured sinks fail or if n8n itself is unavailable. Consider an independent monitoring/uptime system for critical workflows.
+- **Retry and duplication:** Depending on the failed workflow and n8n execution behavior, duplicate alerts/log rows may occur. Add a deduplication key and retention policy if operationally needed.
 
-* n8n
+## Suggested portfolio description
 
-### AI
+> Built a privacy-aware n8n error workflow that normalizes a minimal allowlist of execution metadata and fans out incident notifications to Slack, an operations inbox, and an append-only Sheets log. The design intentionally omits raw payloads and stack traces, isolates notification failures, and documents sensitive execution-link handling and access-control requirements.
 
-* Groq
-* Llama 3.3 70B
-* AI Agent
-* Structured Output Parser
+## License
 
-### Integrations
-
-* Gmail API
-* Slack API
-* Google Sheets API
-
-### Data
-
-* JSON
-* Structured Output
-* Incident Logs
-
----
-
-# 🏗 Workflow Architecture
-
-```text
-Error Trigger
-      │
-      ▼
-Collect Workflow Details
-      │
-      ▼
-AI Incident Analysis
-      │
-      ▼
-Structured JSON Output
-      │
- ┌────┼────┐
- ▼    ▼    ▼
-Gmail Slack Google Sheets
-```
-
----
-
-# 🤖 AI Analysis
-
-The AI Agent automatically generates:
-
-* Root Cause
-* Severity
-* Error Category
-* Recommended Fix
-* Retry Safety
-* Preventive Actions
-* Executive Summary
-
-Example Output:
-
-```json
-{
-  "root_cause": "Invalid API credentials",
-  "severity": "High",
-  "error_category": "Authentication",
-  "recommended_fix": "Update expired API credentials.",
-  "retry_safe": false,
-  "preventive_actions": [
-    "Rotate API keys regularly",
-    "Monitor credential expiration"
-  ],
-  "summary": "Workflow failed due to authentication."
-}
-```
-
----
-
-# 📧 Notification Channels
-
-### Gmail
-
-Automatically sends a detailed production incident report including:
-
-* Workflow Name
-* Failed Node
-* Execution ID
-* Root Cause
-* Recommended Fix
-* Severity
-* Retry Safety
-
----
-
-### Slack
-
-Instant alert containing:
-
-* Workflow
-* Severity
-* Error Category
-* Root Cause
-* Recommended Fix
-* Execution URL
-
----
-
-### Google Sheets
-
-Stores incident history for future analysis.
-
-Logged information includes:
-
-* Timestamp
-* Workflow Name
-* Execution ID
-* Failed Node
-* Error Message
-* Severity
-* Error Category
-* Root Cause
-* Recommended Fix
-* Retry Safe
-* Status
-
----
-
-# 📂 Project Structure
-
-```text
-AI-Workflow-Monitoring-System/
-│
-├── README.md
-├── workflow.json
-├── LICENSE
-├── .gitignore
-└── assets/
-    └── workflow.png
-    └── architecture.png
-```
-
----
-
-# 🚀 Installation
-
-1. Clone the repository.
-
-```bash
-git clone https://github.com/autonode-x/n8n-ai-workflow-monitoring.git
-```
-
-2. Open your n8n instance.
-
-3. Import `workflow.json`.
-
-4. Configure credentials for:
-
-* Groq
-* Gmail
-* Slack
-* Google Sheets
-
-5. Activate the workflow.
-
----
-
-# 💡 Use Cases
-
-* Production Monitoring
-* Business Automation
-* AI Workflow Monitoring
-* Enterprise n8n Deployments
-* Incident Management
-* DevOps Automation
-* AI Operations (AIOps)
-
----
-
-
-# 🔮 Future Improvements
-
-* Microsoft Teams Notifications
-* Discord Alerts
-* Automatic Retry Logic
-* PagerDuty Integration
-* Jira Ticket Creation
-* Dashboard Analytics
-* Multi-Environment Support
-* Webhook Alerts
-
----
-
-# 👨‍💻 Author
-
-**Piyush Kumar**
-
-AI Automation Engineer | AI Agent Developer | n8n Developer
-
-* GitHub: https://github.com/autonode-x
-* LinkedIn: https://www.linkedin.com/in/piyush-ai
-
----
-
-## ⭐ Support
-
-If you found this project useful, consider giving it a **⭐ Star** on GitHub.
+Add a license only if you own or are authorized to redistribute the workflow and its configuration. Review n8n and third-party node/service terms before publishing.

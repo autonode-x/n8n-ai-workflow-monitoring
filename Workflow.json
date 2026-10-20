@@ -5,288 +5,257 @@
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
       "position": [
-        -496,
-        -48
+        -528,
+        208
       ],
-      "id": "02ba1351-bb43-4436-84ee-e2804227ae8b",
+      "id": "f8ad9249-9a83-43e1-a01e-46fc230490f1",
       "name": "Error Trigger"
     },
     {
       "parameters": {
-        "sendTo": "your-email@example.com",
-        "subject": "=🚨 [Production][{{$json.output.severity}}] {{$('Edit Fields').item.json.Workflow}} Failed",
-        "emailType": "text",
-        "message": "=Hello Admin,\n\nA production workflow has failed.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nWORKFLOW DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nWorkflow:\n{{$('Edit Fields').item.json.Workflow}}\n\nWorkflow ID:\n{{$('Edit Fields').item.json[\"Workflow ID\"]}}\n\nExecution ID:\n{{$('Edit Fields').item.json[\"Execution ID\"]}}\n\nFailed Node:\n{{$('Edit Fields').item.json[\"Failed Node\"]}}\n\nExecution Mode:\n{{$('Edit Fields').item.json[\"Execution Mode\"]}}\n\nTimestamp:\n{{$('Edit Fields').item.json.Timestamp}}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nERROR MESSAGE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n{{$('Edit Fields').item.json[\"Error Message\"]}}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAI ANALYSIS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nSeverity:\n{{$json.output.severity}}\n\nCategory:\n{{$json.output.error_category}}\n\nRoot Cause:\n{{$json.output.root_cause}}\n\nRecommended Fix:\n{{$json.output.recommended_fix}}\n\nRetry Safe:\n{{$json.output.retry_safe}}\n\nPreventive Actions:\n{{$json.output.preventive_actions.join('\\n• ')}}\n\nSummary:\n{{$json.output.summary}}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nExecution URL:\n{{$('Edit Fields').item.json[\"Execution URL\"]}}\n\nAutoNode AI Monitoring System",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
-      "position": [
-        304,
-        -240
-      ],
-      "id": "5fcc0b27-e0ca-4eaa-b155-8ff6606625e0",
-      "name": "Send a message1",
-      "webhookId": "00000000-0000-0000-0000-000000000001",
-      "retryOnFail": true,
-      "waitBetweenTries": 5000,
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "FAKE_GMAIL_CRED_ID",
-          "name": "Gmail account"
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b8add284-3673-4df3-9988-f30b69331c75",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "f68f609d-f66e-47c7-a6f5-f971e5009f77",
+              "name": "workflow_name",
+              "value": "={{ $json.workflow?.name || 'Unknown workflow' }}",
+              "type": "string"
+            },
+            {
+              "id": "633f524f-2534-4efc-b0d8-51971cdc095e",
+              "name": "workflow_id",
+              "value": "={{ $json.workflow?.id || 'unavailable' }}",
+              "type": "string"
+            },
+            {
+              "id": "5338e53b-f606-4a81-a121-cba86c9dd0a5",
+              "name": "execution_id",
+              "value": "={{ $json.execution?.id || 'unavailable' }}",
+              "type": "string"
+            },
+            {
+              "id": "cffd3017-26e6-4b9d-b54a-d40918dccff6",
+              "name": "retry_of",
+              "value": "={{ $json.execution?.retryOf || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "f8d91a15-fbe4-4f65-99a5-004f0381f9d6",
+              "name": "failed_node",
+              "value": "={{ $json.execution?.lastNodeExecuted || $json.trigger?.error?.node?.name || 'unknown' }}",
+              "type": "string"
+            },
+            {
+              "id": "24fa8dee-2999-401c-800e-10f658efc6aa",
+              "name": "execution_mode",
+              "value": "={{ $json.execution?.mode || $json.trigger?.mode || 'unknown' }}",
+              "type": "string"
+            },
+            {
+              "id": "e70b13f5-5ab8-411b-83a7-7650ebabec2f",
+              "name": "error_type",
+              "value": "={{ $json.execution?.error?.name || $json.trigger?.error?.name || 'WorkflowError' }}",
+              "type": "string"
+            },
+            {
+              "id": "253bd355-4dc2-4032-a5ee-1d5dc4cacd6e",
+              "name": "status",
+              "value": "failed",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
         }
-      },
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "mode": "raw",
-        "jsonOutput": "={\n  \"Workflow\": \"{{$json.workflow.name}}\",\n  \"Workflow ID\": \"{{$json.workflow.id}}\",\n  \"Execution ID\": \"{{$json.execution.id}}\",\n  \"Execution URL\": \"{{$json.execution.url}}\",\n  \"Retry Of\": \"{{$json.execution.retryOf}}\",\n  \"Failed Node\": \"{{$json.execution.lastNodeExecuted}}\",\n  \"Error Message\": \"{{$json.execution.error.message}}\",\n  \"Error Stack\": \"{{$json.execution.error.stack}}\",\n  \"Execution Mode\": \"{{$json.execution.mode}}\",\n  \"Status\": \"Failed\",\n  \"Timestamp\": \"{{$now.toISO()}}\",\n  \"Enviroment\": \"production\",\n  \"Production\": true,\n  \"severity\": \"{{ $json.node.name == 'CriticalNode'?'High':'Low' }}\",\n}",
-        "options": {}
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -272,
-        -48
+        -288,
+        208
       ],
-      "id": "8c3016fe-2191-4add-aa7f-3a4577cf1421",
-      "name": "Edit Fields"
+      "id": "a3e90221-96d7-4536-997f-b664d080b40c",
+      "name": "Normalize Safe Incident Context",
+      "notesInFlow": true,
+      "notes": "Only execution metadata is retained. Raw error text, stack traces, trigger payloads, credentials, and business data are deliberately excluded."
     },
     {
       "parameters": {
-        "select": "channel",
+        "select": "=channel",
         "channelId": {
           "__rl": true,
-          "value": "C0000000000",
+          "value": "REPLACE_WITH_YOUR_SLACK_CHANNEL_ID",
           "mode": "list",
-          "cachedResultName": "your-channel-name"
+          "cachedResultName": "Configure after import"
         },
-        "text": "=🚨 *Production Workflow Failed*\n\nWorkflow:\n{{$('Edit Fields').item.json.Workflow}}\n\nSeverity:\n{{$json.output.severity}}\n\nCategory:\n{{$json.output.error_category}}\n\nFailed Node:\n{{$('Edit Fields').item.json[\"Failed Node\"]}}\n\nRoot Cause:\n{{$json.output.root_cause}}\n\nFix:\n{{$json.output.recommended_fix}}\n\nRetry Safe:\n{{$json.output.retry_safe}}\n\nExecution:\n{{$('Edit Fields').item.json[\"Execution URL\"]}}",
+        "user": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "text": "=Workflow failure alert\nWorkflow: {{ $json.workflow_name }} ({{ $json.workflow_id }})\nExecution: {{ $json.execution_id }}\nFailed node: {{ $json.failed_node }}\nError type: {{ $json.error_type }}\nMode: {{ $json.execution_mode }}\nRetry of: {{ $json.retry_of || \"none\" }}\nTimestamp: {{ $json.timestamp }}\nRaw input/error details are intentionally omitted.",
         "otherOptions": {}
       },
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.4,
       "position": [
-        304,
-        -48
+        0,
+        0
       ],
-      "id": "6d569a9c-5500-4625-9b20-5df832a768e3",
-      "name": "Send a message",
-      "webhookId": "00000000-0000-0000-0000-000000000002",
-      "retryOnFail": true,
-      "waitBetweenTries": 5000,
-      "credentials": {
-        "slackApi": {
-          "id": "FAKE_SLACK_CRED_ID",
-          "name": "Slack account"
-        }
+      "id": "e5052b2b-515f-427c-9e9b-cdc296103d5d",
+      "name": "Notify Private Ops Channel",
+      "notesInFlow": true,
+      "onError": "continueRegularOutput",
+      "notes": "Bind your Slack credential and private incident channel. This is best-effort; failures do not stop the other incident sinks."
+    },
+    {
+      "parameters": {
+        "sendTo": "REPLACE_WITH_PRIVATE_OPS_EMAIL",
+        "subject": "=[n8n failure] {{ $json.workflow_name }} — execution {{ $json.execution_id }}",
+        "emailType": "text",
+        "message": "=An n8n workflow failed.\n\nWorkflow: {{ $json.workflow_name }} ({{ $json.workflow_id }})\nExecution: {{ $json.execution_id }}\nFailed node: {{ $json.failed_node }}\nError type: {{ $json.error_type }}\nExecution mode: {{ $json.execution_mode }}\nRetry of: {{ $json.retry_of || \"none\" }}\nTimestamp: {{ $json.timestamp }}\n\nRaw error text, stack traces, and workflow input are omitted. Inspect the restricted n8n execution for diagnosis.",
+        "options": {}
       },
-      "onError": "continueRegularOutput"
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        208
+      ],
+      "id": "9ca1092f-3c1a-4e2b-9f90-bbf95cba5fdc",
+      "name": "Email Ops Incident",
+      "notesInFlow": true,
+      "onError": "continueRegularOutput",
+      "notes": "Bind Gmail credential and replace recipient placeholder. Use an access-controlled operations inbox."
     },
     {
       "parameters": {
         "authentication": "serviceAccount",
-        "operation": "appendOrUpdate",
+        "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "FAKE_GOOGLE_SHEET_ID_1234567890",
+          "value": "REPLACE_WITH_YOUR_GOOGLE_RESOURCE_ID",
           "mode": "list",
-          "cachedResultName": "leads",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/FAKE_GOOGLE_SHEET_ID_1234567890/edit?usp=drivesdk"
+          "cachedResultName": "Configure after import",
+          "cachedResultUrl": ""
         },
         "sheetName": {
           "__rl": true,
-          "value": 0,
+          "value": "REPLACE_WITH_YOUR_SHEET_TAB_NAME",
           "mode": "list",
-          "cachedResultName": "Error In work flow",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/FAKE_GOOGLE_SHEET_ID_1234567890/edit#gid=0"
+          "cachedResultName": "Configure after import",
+          "cachedResultUrl": ""
         },
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "Timestamp": "={{ $('Edit Fields').item.json.Timestamp }}",
-            "Workflow": "={{ $('Edit Fields').item.json.Workflow }}",
-            "Execution ID": "={{ $('Edit Fields').item.json['Execution ID'] }}",
-            "Failed Node": "={{ $('Edit Fields').item.json['Failed Node'] }}",
-            "Error Message": "={{ $('Edit Fields').item.json['Error Message'] }}",
-            "Execution Mode": "={{ $('Edit Fields').item.json['Execution Mode'] }}",
-            "Status": "={{ $('Edit Fields').item.json.Status }}",
-            "Execution URL": "={{ $('Edit Fields').item.json['Execution URL'] }}",
-            "Resolved": "=No",
-            "Enviroment": "={{ $('Edit Fields').item.json.Enviroment }}",
-            "Workflow Id": "={{ $('Edit Fields').item.json['Workflow ID'] }}",
-            "Error Category": "={{ $json.output.error_category }}",
-            "Root Cause": "={{ $json.output.root_cause }}",
-            "Recommended Fix": "={{ $json.output.recommended_fix }}",
-            "Retry Safe": "={{$json.output.retry_safe}}"
+            "timestamp": "={{ $now.toISO() }}",
+            "workflow_name": "={{ $json.workflow?.name || 'Unknown workflow' }}",
+            "workflow_id": "={{ $json.workflow?.id || 'unavailable' }}",
+            "execution_id": "={{ $json.execution?.id || 'unavailable' }}",
+            "retry_of": "={{ $json.execution?.retryOf || '' }}",
+            "failed_node": "={{ $json.execution?.lastNodeExecuted || $json.trigger?.error?.node?.name || 'unknown' }}",
+            "execution_mode": "={{ $json.execution?.mode || $json.trigger?.mode || 'unknown' }}",
+            "error_type": "={{ $json.execution?.error?.name || $json.trigger?.error?.name || 'WorkflowError' }}",
+            "status": "failed"
           },
-          "matchingColumns": [
-            "Workflow"
-          ],
+          "matchingColumns": [],
           "schema": [
             {
-              "id": "Timestamp",
-              "displayName": "Timestamp",
+              "id": "timestamp",
+              "displayName": "timestamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Workflow",
-              "displayName": "Workflow",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "removed": false
             },
             {
-              "id": "Workflow Id",
-              "displayName": "Workflow Id",
+              "id": "workflow_name",
+              "displayName": "workflow_name",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "removed": false
             },
             {
-              "id": "Execution ID",
-              "displayName": "Execution ID",
+              "id": "workflow_id",
+              "displayName": "workflow_id",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Failed Node",
-              "displayName": "Failed Node",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Error Message",
-              "displayName": "Error Message",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Execution Mode",
-              "displayName": "Execution Mode",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Status",
-              "displayName": "Status",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Execution URL",
-              "displayName": "Execution URL",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "removed": false
             },
             {
-              "id": "Resolved",
-              "displayName": "Resolved",
+              "id": "execution_id",
+              "displayName": "execution_id",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "removed": false
             },
             {
-              "id": "Resolved By",
-              "displayName": "Resolved By",
+              "id": "retry_of",
+              "displayName": "retry_of",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "removed": false
             },
             {
-              "id": "Notes",
-              "displayName": "Notes",
+              "id": "failed_node",
+              "displayName": "failed_node",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "removed": false
             },
             {
-              "id": "Enviroment",
-              "displayName": "Enviroment",
+              "id": "execution_mode",
+              "displayName": "execution_mode",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "removed": false
             },
             {
-              "id": "Error Category",
-              "displayName": "Error Category",
+              "id": "error_type",
+              "displayName": "error_type",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "removed": false
             },
             {
-              "id": "Root Cause",
-              "displayName": "Root Cause",
+              "id": "status",
+              "displayName": "status",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "Recommended Fix",
-              "displayName": "Recommended Fix",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "Retry Safe",
-              "displayName": "Retry Safe",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
+              "canBeUsedToMatch": false,
               "removed": false
             }
           ],
@@ -298,74 +267,14 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        304,
-        144
+        0,
+        400
       ],
-      "id": "46a6f6fe-6c80-4d20-a481-d5fc17f54a8d",
-      "name": "Append or update row in sheet",
-      "retryOnFail": true,
-      "waitBetweenTries": 5000,
-      "credentials": {
-        "googleApi": {
-          "id": "FAKE_GOOGLE_CRED_ID",
-          "name": "Google Sheets account"
-        }
-      },
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "=Analyze the following workflow failure.\n\nWorkflow:\n{{ $('Edit Fields').item.json.Workflow }}\n\nWorkflow ID:\n{{ $('Edit Fields').item.json[\"Workflow ID\"] }}\n\nExecution ID:\n{{ $('Edit Fields').item.json[\"Execution ID\"] }}\n\nFailed Node:\n{{ $('Edit Fields').item.json[\"Failed Node\"] }}\n\nExecution Mode:\n{{ $('Edit Fields').item.json[\"Execution Mode\"] }}\n\nTimestamp:\n{{ $('Edit Fields').item.json.Timestamp }}\n\nError Message:\n{{ $('Edit Fields').item.json[\"Error Message\"] }}\n\nProvide a production incident analysis.",
-        "hasOutputParser": true,
-        "options": {
-          "systemMessage": "You are a Senior DevOps Engineer and n8n Workflow Architect.\n\nYour task is to analyze failed n8n workflow executions and provide a concise production-ready incident report.\n\nYou will receive:\n- Workflow name\n- Failed node\n- Error message\n- Execution mode\n- Timestamp\n\nYour responsibilities:\n\n1. Identify the root cause.\n2. Classify the error severity:\n   - Critical\n   - High\n   - Medium\n   - Low\n3. Identify error category:\n   - Authentication\n   - API Failure\n   - Rate Limit\n   - Network\n   - Configuration\n   - Validation\n   - AI Output\n   - Unknown\n4. Suggest the most likely fix.\n5. Recommend preventive actions.\n6. Estimate whether retrying the workflow is safe.\n\nRules:\n\n• Never invent technical facts.\n• Base the analysis only on the provided error.\n• Keep explanations short and professional.\n• Return ONLY valid JSON."
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 3.1,
-      "position": [
-        -48,
-        -48
-      ],
-      "id": "698395c4-3575-42d0-a559-3b2714df7138",
-      "name": "AI Agent",
-      "retryOnFail": true,
-      "waitBetweenTries": 5000,
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "jsonSchemaExample": "{\n  \"root_cause\": \"\",\n  \"severity\": \"\",\n  \"error_category\": \"\",\n  \"recommended_fix\": \"\",\n  \"retry_safe\": true,\n  \"preventive_actions\": [\n    \"\"\n  ],\n  \"summary\": \"\"\n}"
-      },
-      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
-      "typeVersion": 1.3,
-      "position": [
-        96,
-        176
-      ],
-      "id": "3a1e8449-e42d-4573-aa52-70840bde6e04",
-      "name": "Structured Output Parser"
-    },
-    {
-      "parameters": {
-        "model": "llama-3.3-70b-versatile",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
-      "typeVersion": 1,
-      "position": [
-        -48,
-        176
-      ],
-      "id": "5d83bb05-5c85-4b5e-88de-50693148c101",
-      "name": "Groq Chat Model",
-      "credentials": {
-        "groqApi": {
-          "id": "FAKE_GROQ_CRED_ID",
-          "name": "Groq account"
-        }
-      }
+      "id": "991926af-44c1-40e2-a407-f846e80e706e",
+      "name": "Append Safe Incident Log",
+      "notesInFlow": true,
+      "onError": "continueRegularOutput",
+      "notes": "Bind Google Sheets credential. Append-only incident log; no raw error message, stack, or business payload is persisted."
     }
   ],
   "connections": {
@@ -373,80 +282,36 @@
       "main": [
         [
           {
-            "node": "Edit Fields",
+            "node": "Normalize Safe Incident Context",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Send a message1": {
-      "main": [
-        []
-      ]
-    },
-    "Edit Fields": {
+    "Normalize Safe Incident Context": {
       "main": [
         [
           {
-            "node": "AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a message": {
-      "main": [
-        []
-      ]
-    },
-    "AI Agent": {
-      "main": [
-        [
-          {
-            "node": "Send a message1",
+            "node": "Notify Private Ops Channel",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Send a message",
+            "node": "Email Ops Incident",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Append or update row in sheet",
+            "node": "Append Safe Incident Log",
             "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Structured Output Parser": {
-      "ai_outputParser": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_outputParser",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Groq Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
             "index": 0
           }
         ]
       ]
     }
   },
-  "pinData": {},
   "meta": {
-    "templateCredsSetupCompleted": true
+    "templateCredsSetupCompleted": false
   }
 }
