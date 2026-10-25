@@ -1,7 +1,5 @@
 # Privacy-Aware n8n Failure Alerting — Architecture
 
-![Architecture infographic](assets/architecture.png)
-
 
 **End-to-end incident notification flow: capture minimal failure metadata and fan it out to operations channels without copying raw payloads or stack traces.**
 
